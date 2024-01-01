@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <div class="col-md-6">
+      <img src="{% static 'images/product/p1.jpg' %}" alt="Product image" class="img-fluid" id="mainImage" >
+      <div class="d-flex mt-3">
+        <img src="{% static 'images/product/p3.jpg' %}" alt="Thumbnail 1" class="img-thumbnail me-2" style="width: 90px; height: 115px;" onclick="changeImage('{% static 'images/thumbnails/thumbnail1.jpg' %}')">
+        <img src="{% static 'images/product/p2.jpeg' %}" alt="Thumbnail 2" class="img-thumbnail me-2" style="width: 90px; height: 115px;" onclick="changeImage('{% static 'images/thumbnails/thumbnail2.jpg' %}')">
+        </div>
+    </div>
+    <div class="col-md-6">
+      <h1>Product Name</h1>
+      <p class="mt-3">Product description details, highlighting key features and benefits.</p>
+      <div class="d-flex align-items-center mt-3">
+        <h4 class="me-3">Price: ₹1000</h4>
+        <span class="text-success">20% off</span>
+      </div>
+      <p class="mt-3">Expected delivery: Within 7 business days</p>
+      <div class="d-flex mt-3">
+        <button class="btn btn-primary me-2">Add to cart</button>
+        <button class="btn btn-outline-primary">Buy now</button>
+        <i class="far fa-heart ms-2 text-muted"></i>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <h2>Product Reviews</h2>
+  <hr>
+  <h2>Similar Products</h2>
+  </div>
+
+<script>
+function changeImage(imageSrc) {
+  document.getElementById("mainImage").src = imageSrc;
+}
+</script>
+
+{% endblock %}

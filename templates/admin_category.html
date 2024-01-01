@@ -1,0 +1,51 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Admin Panel
+{% endblock %}
+
+{% block content %}
+
+<h1>Category Management</h1>
+<a href="{% url "add_category" %}">Add</a>
+<button type="button"  class="btn btn-outline-info" href="{% url "add_category" %}">Info</button>
+
+<table class="table table-striped m-4">
+    <thead>
+        <tr>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in catgry %}
+        <tr>
+            <td><a href="">{{ c.name }}</a></td>
+            <td>{{ c.description }}</td>
+            <td><img src="{{ c.image.url }}" alt="image" class="img-thumbnail" style="width: 100px; height: 100px;"></td>
+            
+            <td>
+                <a href="" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
+                <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+    
+    <div class="m-3">
+        <a href="{% url 'add_category' %}" class="btn btn-success">Add Category</a>
+    </div>
+    
+    
+
+
+
+  
+  
+
+{% endblock %}

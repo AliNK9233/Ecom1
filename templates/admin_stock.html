@@ -1,0 +1,130 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Admin Panel
+{% endblock %}
+
+{% block content %}
+
+<div
+ 
+class="container mt-5">
+        <h1>Manage Variants for {{ product.name }}</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Color</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for variant in stock %}
+                <tr>
+                    <td>{{ variant.product.name }}</td>
+                    <td>{{ variant.color }}</td>
+                    <td>{{ variant.stock }}</td>
+                    <td>
+                        <a href="" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No variants found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Add Variant</h2>
+
+        <form action="" method="post">
+            {% csrf_token %}
+
+            <div
+ 
+class="mb-3">
+
+                
+<label
+ 
+for="color"
+ 
+class="form-label">Color:</label>
+
+                
+<input
+ 
+type="text"
+ 
+class="form-control"
+ 
+id="color"
+ 
+name="color"
+ 
+required>
+
+            
+</div>
+
+
+            
+<div
+ 
+class="mb-3">
+
+                
+<label
+ 
+for="size" class="form-label">Size:</label>
+                <input type="text" class="form-control" id="size" name="size" required>
+
+            
+</div>
+
+
+            
+<div
+ 
+class="mb-3">
+
+                
+<label
+ 
+for="stock"
+ 
+class="form-label">Stock:</label>
+
+                
+<input
+ 
+type="number"
+ 
+class="form-control"
+ 
+id="stock"
+ 
+name="stock"
+ 
+required>
+
+            
+</div>
+
+
+            
+<button
+ 
+type="submit"
+ 
+class="btn btn-success">Add Variant</button>
+        </form>
+    </div>
+
+
+
+{% endblock %}
