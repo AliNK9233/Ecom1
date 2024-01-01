@@ -86,11 +86,11 @@ def add_category(request):
 def admin_home(request):
     pass
 
-    # dict_user = {
-    #     'user':UserProfile.objects.all()
-    # }
+    dict_user = {
+         'user':UserProfile.objects.all()
+    }
 
-    # return render(request,'admin_home.html',dict_user)
+    return render(request,'admin_home.html',dict_user)
 
 def admin_stock(request):
 
