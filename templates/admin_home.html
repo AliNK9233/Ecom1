@@ -1,3 +1,5 @@
+
+
 {% extends "base_admin.html" %}
 {% load static %}
 {% block title %}
@@ -6,46 +8,49 @@ Admin Panel
 
 {% block content %}
 
-{% comment %} <div class="container-fluid">
-    <h1 class="text-center mb-4">User Management</h1>
-    <table class="table table-hover table-bordered table-striped">
-      <thead class="thead-light">
-        <tr>
-          <th><input type="checkbox" id="selectAll"></th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Age</th>
-          
-          <th>Status</th>
-          <th>Wallet Balance</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for user in user %}
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>+91-{{ user.phone }}</td>
-          <td>{{ user.age }}</td>
-          <td>
-            <button class="btn btn-success btn-sm toggle-status" data-user-id="1">{{ user.status }}</button>
-          </td>
-          <td>${{ user.wallet_balance }}</td>
-          <td>
-            <button class="btn btn-primary btn-sm">Edit</button>
-            <button class="btn btn-danger btn-sm">Delete</button>
-          </td>
-        </tr>
-        {% endfor %}
-         </tbody>
-    </table>
-    <div class="d-flex justify-content-end my-4">
-      <button class="btn btn-danger mx-2">Delete Selected</button>
-    </div>
-  </div> {% endcomment %}
+<div class="container-fluid">
+  <h1 class="text-center mb-4">User Management</h1>
+  <table class="table table-hover table-bordered table-striped">
+    <thead class="thead-light">
+      <tr>
+        <th><input type="checkbox" id="selectAll"></th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Age</th>
+        <th>Status</th>
+        <th>Wallet Balance</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in userdetails %}
+      <tr>
+        <td><input type="checkbox"></td>
+        <td>{{ user.user.username }}</td>
+        <td>{{ user.user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.age }}</td>
+        <td>{{ user.is_active }}</td>
+        <td>${{ user.wallet_balance }}</td>
+        <td>
+          {% if user.user.is_active %}
+          <a href="{% url 'deactivate_user' user.user.id %}" class="btn btn-danger btn-sm">Deactivate</a>
+          {% else %}
+          <a href="{% url 'activate_user' user.user.id %}" class="btn btn-primary btn-sm">Activate</a>
+          {% endif %}
+          {{user.user.id}}
+          <a href="{% url 'delete_user' user.user.id %}" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+ 
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-end my-4">
+    <button class="btn btn-danger mx-2">Delete Selected</button>
+  </div>
+</div>
   
   
 

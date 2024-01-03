@@ -1,0 +1,35 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% block title %}
+Add Variant
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <h1>Add Variant</h1>
+  <hr>
+
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="product" class="form-label">Product:</label>
+      <p class="form-text">{{ product.name }}</p>  <input type="hidden" id="product" name="product" value="{{ product.id }}">
+    </div>
+
+    <div class="mb-3">
+      <label for="color" class="form-label">Color:</label>
+      <input type="text" class="form-control" id="color" name="color" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="stock" class="form-label">Stock:</label>
+      <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Variant</button>
+  </form>
+</div>
+
+{% endblock %}

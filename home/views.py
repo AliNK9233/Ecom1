@@ -1,19 +1,24 @@
+import random
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from .models import Category,Variant,UserProfile
+from .models import Category,Variant,UserProfile,Product
+
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
 
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-
+from .helper import MessageHandler
+from django.shortcuts import render, get_object_or_404
 
 #import forms
 
-from .forms import registerForm
+from .forms import SignupForm
 
 # Create your views here.
-@login_required(login_url='login')
+#@login_required(login_url='login')
 def index(request):
 
     dict_cat = {
@@ -27,17 +32,33 @@ def user_signup(request):
         return redirect('home')
     else:
         if request.method == 'POST':
-            form = registerForm(request.POST)
+            form = SignupForm(request.POST)
+            if User.objects.filter(username__iexact=request.POST['username']).exists():
+                messages.error(request, "User already exists")
+                return redirect('signup')
+            
             if form.is_valid():
-                form.save()
-                user = form.cleaned_data.get('username')
-                messages.success(request, 'Account was created for' + user )
+                user = form.save()
+
+                profile = UserProfile.objects.create(
+                    user=user,
+                    phone=form.cleaned_data['phone'],
+                    age=form.cleaned_data['age'],
+                )
+                
+                user_name = form.cleaned_data.get('username')
+                messages.success(request, f'Account was created for {user_name}')
                 return redirect('login')  
         else:
-            form = registerForm()
+            form = SignupForm()
 
         context = {'form': form}
         return render(request, 'signup.html', context)
+
+    
+
+
+
 
 def user_login(request):
 
@@ -68,7 +89,32 @@ def product_details(request):
     return render(request,'product_details.html')
 
 def add_product(request):
-    return render(request,'admin_Add_product.html')
+    categories = Category.objects.all()  # Fetch categories for the dropdown
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        category_id = request.POST.get('category')
+        price = request.POST.get('price')
+        image = request.FILES.get('image')
+        discount_percentage = request.POST.get('discount_percentage', None)
+
+        try:
+            product = Product.objects.create(
+                name=name,
+                description=description,
+                category=Category.objects.get(id=category_id),
+                price=price,
+                image=image,
+                discount_percentage=discount_percentage
+            )
+            return redirect('product_detail', product.id)  # Redirect to product detail page
+        except Exception as e:
+            
+            print(e)
+            return render(request, 'admin_Add_product.html', {'categories': categories, 'error': 'Error creating product'})
+    else:
+        return render(request, 'admin_Add_product.html', {'categories': categories})
 
 def category(request):
     
@@ -84,10 +130,10 @@ def add_category(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def admin_home(request):
-    pass
 
     dict_user = {
-         'user':UserProfile.objects.all()
+         'userdetails':UserProfile.objects.all(),
+         'user':User.objects.all()
     }
 
     return render(request,'admin_home.html',dict_user)
@@ -99,3 +145,59 @@ def admin_stock(request):
     }
 
     return render(request,'admin_stock.html',dict_stock)
+
+def activate_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.is_active = True
+    user.save()
+    messages.success(request, f'User {user.username} has been activated.')
+    return redirect('admin_home')  
+
+def deactivate_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.is_active = False
+    user.save()
+    messages.success(request, f'User {user.username} has been deactivated.')
+    return redirect('admin_home')
+
+
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    return redirect('admin_home')
+
+def admin_product(request):
+    products = Product.objects.all()  
+    return render(request, 'admin_product.html', {'products': products})
+
+def add_variant(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == 'POST':
+        color = request.POST.get('color')
+        stock = request.POST.get('stock')
+
+        try:
+            Variant.objects.create(
+                product=product,
+                color=color,
+                stock=stock
+            )
+            return redirect('admin_product')  # Redirect to product list
+        except Exception as e:
+            # Handle errors during variant creation
+            print(e)
+            return render(request, 'admin_Add_variant.html', {'product': product, 'error': 'Error creating variant'})
+    else:
+        return render(request, 'admin_Add_variant.html', {'product': product})
+    
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    variants = Variant.objects.filter(product=product)
+
+    context = {
+        'product': product,
+        'variants': variants,
+    }
+
+    return render(request, 'admin_variants.html', context)

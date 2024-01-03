@@ -42,13 +42,14 @@
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url "category" %}">Categories</a></li>
               <li><a class="dropdown-item" href="#">Coupons</a></li>
+              <li><a class="dropdown-item" href="{% url 'admin_product' %}">Products</a></li>
             </ul>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              John Doe
+              {{ user.username }}
             </a>
             <ul class="dropdown-menu" aria-labelledby="userDropdown">
               <li><a class="dropdown-item" href="#">Profile</a></li>

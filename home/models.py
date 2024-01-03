@@ -1,14 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 # Create your models here.
 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True,related_name="profile")
-    phone = models.CharField(max_length=20, unique=True)  # Use phone for login
-    age = models.IntegerField()
-    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
+    phone = models.CharField(max_length=20)  
+    age = models.IntegerField(null=True)
+    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0) 
+
 
 
     def __str__(self):
