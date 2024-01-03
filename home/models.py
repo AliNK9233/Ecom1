@@ -10,6 +10,7 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=20)  
     age = models.IntegerField(null=True)
     wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0) 
+    otp = models.CharField(max_length=100, null=True, blank=True)
 
 
 

@@ -1,3 +1,4 @@
+from audioop import reverse
 import random
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -60,26 +61,67 @@ def user_signup(request):
 
 
 
+# def user_login(request):
+
+#     if request.method == 'POST':
+#         username=request.POST.get('username')
+#         password=request.POST.get('password')
+
+#         user = authenticate(request,username=username,password=password)
+
+#         if user is not None:
+#             login(request,user)
+#             return redirect('home')
+#         else:
+#             messages.info(request,'User name or password not matching')
+
+    
+#     context = {}
+#     return render(request,'login.html',context)
+
+# def login_otp(request):
+#     pass
+    
 def user_login(request):
 
     if request.method == 'POST':
         username=request.POST.get('username')
         password=request.POST.get('password')
-
         user = authenticate(request,username=username,password=password)
-
+        otp=random.randint(1000,9999)
+        
         if user is not None:
-            login(request,user)
-            return redirect('home')
+            
+            user_profile = UserProfile.objects.get(user=user)
+            user_profile.otp = otp
+            user_profile.save()
+            phone_number = UserProfile.phone
+            messagehandler = MessageHandler(9746568269, otp).send_otp_via_message()
+            
+            return redirect('otp_verify')
+    
+              
         else:
             messages.info(request,'User name or password not matching')
 
-    
     context = {}
     return render(request,'login.html',context)
+    
+    
+def otp_verify(request):
+    if request.method == "POST":
+        # Perform OTP verification
+        profile = UserProfile.objects.get(otp=request.POST['otp'])
 
-def login_otp(request):
-    pass
+        
+        if profile.otp == request.POST['otp']:
+            user = profile.user
+            login(request, user)
+ 
+            return redirect('home')
+        return HttpResponse("10 minutes passed")
+
+    return render(request, "login_otp.html")
 
 def user_logout(request):
     logout(request)
