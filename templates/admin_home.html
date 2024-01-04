@@ -39,8 +39,6 @@ Admin Panel
           {% else %}
           <a href="{% url 'activate_user' user.user.id %}" class="btn btn-primary btn-sm">Activate</a>
           {% endif %}
-          {{user.user.id}}
-          <a href="{% url 'delete_user' user.user.id %}" class="btn btn-danger btn-sm">Delete</a>
         </td>
  
       </tr>

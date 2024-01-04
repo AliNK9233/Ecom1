@@ -41,10 +41,10 @@ class Address(models.Model):
 class Product(models.Model):
   name = models.CharField(max_length=255)
   description = models.TextField()
-  category = models.ForeignKey(Category, on_delete=models.CASCADE) # Assuming a Category model
+  category = models.ForeignKey(Category, on_delete=models.CASCADE) 
   price = models.DecimalField(max_digits=10, decimal_places=2)
-  rating = models.DecimalField(max_digits=3, decimal_places=1, default=0) # Example rating
-  image = models.ImageField(upload_to='product_images') # Example image handling
+  rating = models.DecimalField(max_digits=3, decimal_places=1, default=0) 
+  image = models.ImageField(upload_to='product_images') 
   discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
   brand = models.CharField(max_length=100, null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -64,6 +64,7 @@ class Variant(models.Model):
     battery = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     is_available = models.BooleanField(default=True,null=True)
+    image = models.ImageField(upload_to='varient_images',null=True)
 
     def __str__(self):
         return f"{self.product.name} - {self.color}"
