@@ -90,13 +90,17 @@ def user_login(request):
         user = authenticate(request,username=username,password=password)
         otp=random.randint(1000,9999)
         
+
+        
         if user is not None:
             
             user_profile = UserProfile.objects.get(user=user)
+            phone_number = user_profile.phone
+            
             user_profile.otp = otp
             user_profile.save()
-            phone_number = UserProfile.phone
-            messagehandler = MessageHandler(9746568269, otp).send_otp_via_message()
+            
+            messagehandler = MessageHandler(phone_number, otp).send_otp_via_message()
             
             return redirect('otp_verify')
     

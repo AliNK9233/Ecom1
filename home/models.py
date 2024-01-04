@@ -46,6 +46,10 @@ class Product(models.Model):
   rating = models.DecimalField(max_digits=3, decimal_places=1, default=0) # Example rating
   image = models.ImageField(upload_to='product_images') # Example image handling
   discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+  brand = models.CharField(max_length=100, null=True, blank=True)
+  created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+  is_available = models.BooleanField(default=True,null=True)
+
 
   def __str__(self):
     return self.name
@@ -54,9 +58,15 @@ class Variant(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     color = models.CharField(max_length=50)
     stock = models.IntegerField()
+    price_modifier = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    ram = models.CharField(max_length=50, null=True, blank=True)
+    storage = models.CharField(max_length=50, null=True, blank=True)
+    battery = models.CharField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    is_available = models.BooleanField(default=True,null=True)
 
     def __str__(self):
-        return f"{self.product} - {self.color}"
+        return f"{self.product.name} - {self.color}"
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Relationship to Product model
