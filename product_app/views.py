@@ -16,6 +16,8 @@ def add_product(request):
         description = request.POST.get('description')
         category_id = request.POST.get('category')
         price = request.POST.get('price')
+        brand = request.POST.get('brand')
+        rating = request.POST.get('rating')
         image = request.FILES.get('image')
         discount_percentage = request.POST.get('discount_percentage', None)
 
@@ -25,6 +27,8 @@ def add_product(request):
                 description=description,
                 category=Category.objects.get(id=category_id),
                 price=price,
+                brand=brand,
+                rating=rating,
                 image=image,
                 discount_percentage=discount_percentage
             )
@@ -48,11 +52,32 @@ def add_variant(request, product_id):
         color = request.POST.get('color')
         stock = request.POST.get('stock')
 
+        price_modifier = request.POST.get('price_modifier')
+        ram = request.POST.get('ram')
+        storage = request.POST.get('storage')
+        battery = request.POST.get('battery')
+
+        image = request.FILES.get('image')
+        image2 = request.FILES.get('image2')
+        image3 = request.FILES.get('image3')
+
+
         try:
             Variant.objects.create(
                 product=product,
                 color=color,
-                stock=stock
+                stock=stock,
+                price_modifier=price_modifier,
+                ram=ram,
+                storage=storage,
+                battery=battery,
+             
+                image=image,
+                image2=image2,
+                image3=image3,
+
+
+
             )
             return redirect('admin_product')  # Redirect to product list
         except Exception as e:

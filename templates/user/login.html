@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+  <div class="card rounded-3 shadow-sm">
+    <div class="card-body">
+      <h2 class="text-center mb-4">Welcome Back!</h2>
+      <form method="POST" id="loginForm">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+          <i class="fas fa-user fa-fw"></i>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+          <i class="fas fa-lock fa-fw"></i>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Send OTP</button>
+      </form>
+    </div>
+    {% for message in messages %}
+      <p> {{message}}
+    {% endfor %}
+  </div>
+</div>
+
+
+{% endblock %}

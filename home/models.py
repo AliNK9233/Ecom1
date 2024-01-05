@@ -44,7 +44,7 @@ class Product(models.Model):
   category = models.ForeignKey(Category, on_delete=models.CASCADE) 
   price = models.DecimalField(max_digits=10, decimal_places=2)
   rating = models.DecimalField(max_digits=3, decimal_places=1, default=0) 
-  image = models.ImageField(upload_to='product_images') 
+  image = models.ImageField(upload_to='product_images',null=True) 
   discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
   brand = models.CharField(max_length=100, null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -65,13 +65,15 @@ class Variant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     is_available = models.BooleanField(default=True,null=True)
     image = models.ImageField(upload_to='varient_images',null=True)
+    image2 = models.ImageField(upload_to='varient_images',null=True)
+    image3 = models.ImageField(upload_to='varient_images',null=True)
 
     def __str__(self):
         return f"{self.product.name} - {self.color}"
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Relationship to Product model
-    image = models.ImageField(upload_to='product_images')
+    image = models.ImageField(upload_to='product_images',null=True)
 
  
 
