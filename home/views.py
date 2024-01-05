@@ -1,6 +1,6 @@
 
-from django.shortcuts import redirect, render
-from .models import Category,Variant
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Category,Variant,Product
 from django.shortcuts import render
 
 #import forms
@@ -8,18 +8,21 @@ from django.shortcuts import render
 from .forms import SignupForm
 
 # Create your views here.
-#@login_required(login_url='login')
+
 def index(request):
 
     dict_cat = {
-        'cat':Category.objects.all(),
-        'var':Variant.objects.all()
+        'category':Category.objects.all(),
+        'variants':Variant.objects.all()
     }
     return render(request,'index.html',dict_cat)
 
 
-def product_details(request):
-    return render(request,'product_details.html')
+def product_details(request, variant_id):
+    variant = get_object_or_404(Variant, pk=variant_id)
+    product = variant.product
+    variants = product.variant_set.all()
+    return render(request, 'product_details.html', {'variant': variant, 'variants': variants, 'selected_variant': variant})
 
 
 def admin_stock(request):

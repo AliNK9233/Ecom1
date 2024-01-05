@@ -1,44 +1,88 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Product Details{% endblock %}
 
 {% block content %}
 
-<div class="container mt-5 mb-5">
-  <div class="row">
-    <div class="col-md-6">
-      <img src="{% static 'images/product/p1.jpg' %}" alt="Product image" class="img-fluid" id="mainImage" >
-      <div class="d-flex mt-3">
-        <img src="{% static 'images/product/p3.jpg' %}" alt="Thumbnail 1" class="img-thumbnail me-2" style="width: 90px; height: 115px;" onclick="changeImage('{% static 'images/thumbnails/thumbnail1.jpg' %}')">
-        <img src="{% static 'images/product/p2.jpeg' %}" alt="Thumbnail 2" class="img-thumbnail me-2" style="width: 90px; height: 115px;" onclick="changeImage('{% static 'images/thumbnails/thumbnail2.jpg' %}')">
+<section class="product-details mt-5 mb-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <img src="{{ variant.image.url }}" class="img-fluid" alt="{{variant.product.name }}" id="mainImage">
+
+        <div class="row mt-3">
+          
+          <div class="col-4">
+            <a href="#">
+              <img src="{{ variant.image2.url }}" class="img-thumbnail" alt="{{ product.name }}" onclick="changeImage(this)">
+            </a>
+          </div>
+          <div class="col-4">
+            <a href="#">
+              <img src="{{ variant.image3.url }}" class="img-thumbnail" alt="{{ product.name }}" onclick="changeImage(this)">
+            </a>
+          </div>
+          <div class="col-4">
+            <a href="#">
+              <img src="{{ variant.image.url }}" class="img-thumbnail" alt="{{ product.name }}" onclick="changeImage(this)">
+            </a>
+          </div>
+          
         </div>
-    </div>
-    <div class="col-md-6">
-      <h1>Product Name</h1>
-      <p class="mt-3">Product description details, highlighting key features and benefits.</p>
-      <div class="d-flex align-items-center mt-3">
-        <h4 class="me-3">Price: ₹1000</h4>
-        <span class="text-success">20% off</span>
       </div>
-      <p class="mt-3">Expected delivery: Within 7 business days</p>
-      <div class="d-flex mt-3">
-        <button class="btn btn-primary me-2">Add to cart</button>
-        <button class="btn btn-outline-primary">Buy now</button>
-        <i class="far fa-heart ms-2 text-muted"></i>
+      <div class="col-md-6">
+        <h1>{{ variant.product.name }}</h1>
+        <p class="lead mb-3">{{ variant.product.description }}</p>
+
+        <div class="d-flex align-items-center mb-3">
+          <i class="fas fa-star text-warning"></i> {{ variant.product.rating }}
+          <span class="ml-2">|</span> RAM: {{ variant.ram }} GB
+          <span class="ml-2">|</span> Storage: {{ variant.storage }} GB
+          <span class="ml-2">|</span> Battery: {{ variant.battery }} mAh
+          <span class="ml-2">|</span> Brand: {{ variant.product.brand }}
+        </div>
+
+        <section class="product-details mt-5 mb-5">
+          <div class="container">
+            <div class="row g-4">
+              <div class="mb-3">
+                <h5>Available Variants:</h5>
+                <ul class="list-unstyled">
+                  {% for variant in variants %}
+                    <li>
+                      <a href="{% url 'product_details' variant.id %}" class="{% if variant == selected_variant %}text-primary font-weight-bold{% endif %}">
+                        {{ variant.product.name }} - {{ variant.color }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+        
+              </div>
+          </div>
+        </section>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <a href="#" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Add to Cart</a>
+          <a href="#" class="btn btn-outline-primary"><i class="far fa-heart"></i> Add to Wishlist</a>
+        </div>
+
+        
       </div>
     </div>
+
+    <hr>
+    <h2>Product Reviews</h2>
+    <hr>
+    <h2>Similar Products</h2>
   </div>
-  <hr>
-  <h2>Product Reviews</h2>
-  <hr>
-  <h2>Similar Products</h2>
-  </div>
+</section>
 
 <script>
-function changeImage(imageSrc) {
-  document.getElementById("mainImage").src = imageSrc;
-}
-</script>
+  function changeImage(image) {
+    document.getElementById("mainImage").src = image.src;
+  }
+  </script>
 
 {% endblock %}
