@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Category,Variant,Product
 from django.shortcuts import render
 
+
 #import forms
 
 from .forms import SignupForm
