@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Order Tracking{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+  <div class="card text-center">
+    <div class="card-header bg-primary text-white">
+      <h1 class="mb-0">Order Tracking</h1>
+    </div>
+    <div class="card-body">
+
+      {% if order %}
+        <h2 class="card-title">Order #{{ order.id }}</h2>
+        <p class="card-text">Order Date: {{ order.order_date }}</p>
+        <p class="card-text">Total Price: ₹{{ order.total_price }}</p>
+        <p class="card-text">Delivery Status: {{ order.delivery_status }}</p>
+
+        {% if order.delivery_status == 'Pending' %}
+          <form action="{% url 'cancel_order' order.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Cancel Order</button>
+          </form>
+
+          <form action="{% url 'change_address' order.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="new_address">Change Address:</label>
+              <select id="new_address" name="new_address" class="form-select">
+                {% for address in addresses %}
+                <option value="{{ address.id }}">{{ address.street }} {{ address.city }} {{ address.state }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Address</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <p class="card-text">No order found.</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

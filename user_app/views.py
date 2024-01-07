@@ -13,6 +13,9 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from home.helper import MessageHandler
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
 
 #import forms
 
@@ -150,4 +153,25 @@ def add_address(request):
 
     return redirect('user_profile')
 
-    
+
+def change_password(request):
+    print("Change Password View Accessed")  # Add this line
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        print(form.is_valid())  # Add this line
+
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+
+            messages.success(request, 'Password changed successfully!')
+            return redirect('user_profile')  # Redirect to profile page
+        else:
+            messages.error(request, 'Invalid password change.')
+    else:  # Handle GET requests
+        form = PasswordChangeForm(request.user)
+
+    return render(request, 'user/change_password.html', {'form': form})
+
+

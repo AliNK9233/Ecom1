@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="mb-4">Checkout</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Order Summary</h2>
+          <ul class="list-group">
+            {% for item in cart_items %}
+            <li class="list-group-item">
+              <img src="{{ item.product_variant.image.url }}" alt="{{ item.product_variant.name }}" class="img-thumbnail mr-2" style="width: 50px;">
+              {{ item.product_variant.name }} x {{ item.quantity }} - ₹{{ item.product_variant.price }}
+            </li>
+            {% endfor %}
+            <li class="list-group-item d-flex justify-content-between">
+              <strong>Total:</strong>
+              <span>₹{{ total_price }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Shipping and Payment Details</h2>
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="shipping_address" class="form-label">Shipping Address:</label>
+              <select id="shipping_address" name="shipping_address" class="form-select">
+                {% for address in addresses %}
+                <option value="{{ address.id }}">{{ address.street }} {{ address.city }} {{ address.state }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="payment_type" class="form-label">Payment Method:</label>
+              <select id="payment_type" name="payment_type" class="form-select">
+                {% for type in payment_types %}
+                <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Place Order</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,11 +1,14 @@
 
-from django.http import JsonResponse
+from audioop import reverse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
+from orders.models import Order
 from home.models import UserProfile,Category
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
 
 # Create your views here.
 
@@ -102,3 +105,42 @@ def delete_category(request, category_id):
         return redirect('category')
 
     return render(request, 'admin/delete_category.html', {'category': category})
+
+@staff_member_required
+def admin_order_list(request):
+    orders = Order.objects.all()
+    delivery_status_choices = Order._meta.get_field('delivery_status').choices
+    payment_status_choices = Order._meta.get_field('payment_status').choices
+    context = {
+        'orders': orders,
+        'delivery_status_choices': delivery_status_choices,
+        'payment_status_choices': payment_status_choices,
+    }
+    return render(request, 'admin/order_list.html', context)
+
+@staff_member_required
+def mark_as_shipped(request):
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('_selected_action')
+        Order.objects.filter(id__in=order_ids).update(delivery_status='Shipped')
+        messages.success(request, 'Selected orders marked as Shipped.')
+    return HttpResponseRedirect(reverse('admin:admin_order_list'))
+
+@staff_member_required
+def mark_as_delivered(request):
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('_selected_action')
+        Order.objects.filter(id__in=order_ids).update(delivery_status='Delivered')
+        messages.success(request, 'Selected orders marked as Delivered.')
+    return HttpResponseRedirect(reverse('admin:admin_order_list'))
+
+@staff_member_required
+def cancel_orders(request):
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('_selected_action')
+        Order.objects.filter(id__in=order_ids).update(delivery_status='Cancelled')
+        messages.success(request, 'Selected orders canceled.')
+    return HttpResponseRedirect(reverse('admin:admin_order_list'))
+
+
+

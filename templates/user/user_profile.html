@@ -122,5 +122,34 @@
   </div>
 </div>
 
+<div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="passwordChangeModalLabel">Change Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'change_password' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="current_password" class="form-label">Current Password:</label>
+            <input type="password" class="form-control" id="current_password" name="current_password">
+          </div>
+          <div class="mb-3">
+            <label for="new_password1" class="form-label">New Password:</label>
+            <input type="password" class="form-control" id="new_password1" name="new_password1">
+          </div>
+          <div class="mb-3">
+            <label for="new_password2" class="form-label">Confirm New Password:</label>
+            <input type="password" class="form-control" id="new_password2" name="new_password2">
+          </div>
+          <button type="submit" class="btn btn-primary">Change Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 {% endblock %}
