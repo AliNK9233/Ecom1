@@ -81,6 +81,7 @@
               </button>
               <ul class="dropdown-menu">
                   {% if user.is_authenticated %}
+                  <li><a class="dropdown-item" href="{% url 'user_profile' %}">My Profile</a></li>
                       <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                   {% else %}
                       <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>

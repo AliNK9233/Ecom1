@@ -4,6 +4,7 @@ import random
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from home.models import UserProfile
+from .models import Address
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -45,7 +46,7 @@ def user_login(request):
             messages.info(request,'User name or password not matching')
 
     context = {}
-    return render(request,'login.html',context)
+    return render(request,'user/login.html',context)
     
     
 def otp_verify(request):
@@ -61,7 +62,7 @@ def otp_verify(request):
             return redirect('home')
         return HttpResponse("10 minutes passed")
 
-    return render(request, "login_otp.html")
+    return render(request, "user/login_otp.html")
 
 def user_logout(request):
     logout(request)
@@ -94,4 +95,59 @@ def user_signup(request):
             form = SignupForm()
 
         context = {'form': form}
-        return render(request, 'signup.html', context)
+        return render(request, 'user/signup.html', context)
+
+
+def user_profile(request):
+
+    try:
+        userprofile = request.user.profile  # Retrieve the current user's profile
+
+        if request.method == "POST":
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            age = request.POST.get('age')
+
+            userprofile.phone = phone
+            userprofile.email = email
+            userprofile.age = age
+            userprofile.save()  # Save the updated profile
+
+            return redirect('user_profile')  # Redirect to refresh the page
+
+    except UserProfile.DoesNotExist:
+        
+        pass # will create new userProfile for that user
+
+    if request.method == "POST" and request.POST.get('action') == 'add_address':
+        street = request.POST.get('street')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        zip_code = request.POST.get('zip_code')
+
+        address = Address.objects.create(
+            street=street, city=city, state=state, zip_code=zip_code, user=request.user
+        )
+        return redirect('user_profile')  # Redirect to refresh the page
+    
+    
+
+    return render(request, 'user/user_profile.html')
+
+
+def add_address(request):
+
+    if request.method == "POST":
+        street = request.POST.get('street')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        zip_code = request.POST.get('pin')
+
+        address = Address.objects.create(
+            street=street, city=city, state=state, zip_code=zip_code, user=request.user
+        )
+        return redirect('user_profile')  # Redirect to the profile page
+
+    return redirect('user_profile')
+
+    
