@@ -22,3 +22,7 @@ class Cart(models.Model):
     items = models.ManyToManyField(CartItem, related_name='cart_items')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def update_total_price(self):
+        self.total_price = sum(item.subtotal() for item in self.items.all())
+        self.save()
+

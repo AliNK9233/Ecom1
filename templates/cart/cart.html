@@ -28,12 +28,21 @@
         <tr>
           <td>{{ item.product_variant.product.name }} - {{ item.product_variant.color }}</td>
           <td>
-            <input type="number" class="form-control" value="{{ item.quantity }}" min="1" max="{{ item.product_variant.stock }}">
-          </td>
-          <td>₹1000</td>
-          <td>₹410</td>
+            
+            <form action="{% url 'increase_quantity' item.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-plus"></i></button>
+          </form>
+          {{ item.quantity }}
+          <form action="{% url 'decrease_quantity' item.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-minus"></i></button>
+          </form>
+        </td>
+          <td>{{item.product_variant.price}}</td>
+          <td>{{ item.subtotal }}</td>
           <td>
-            <a href="#" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+            <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
           </td>
         </tr>
         {% endfor %}
@@ -48,7 +57,7 @@
   
     <div class="d-flex justify-content-between mt-4">
       <a href="{% url "home" %}" class="btn btn-primary">Continue Shopping</a>
-      <a href="#" class="btn btn-success">Proceed to Checkout</a>
+      <a href="{% url "home" %}" class="btn btn-success">Proceed to Checkout</a>
     </div>
   </div>
   

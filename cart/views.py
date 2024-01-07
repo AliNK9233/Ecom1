@@ -38,23 +38,45 @@ def add_to_cart(request, variant_id):
     cart.total_price += variant.price
     cart.save()
 
-    return redirect('cart', variant.id)  # Redirect to the product details page
+    return redirect('view_cart')  # Redirect to the product details page
 
 
-# def remove_from_cart(user, cart_item_id):
-#     cart = Cart.objects.get(user=user)
-#     cart_item = CartItem.objects.get(id=cart_item_id)
-#     cart.items.remove(cart_item)
-#     cart.save()
+@login_required
+def decrease_quantity(request, cart_item_id):
+    cart_item = get_object_or_404(CartItem, id=cart_item_id)
+
+    # Decrease the quantity, but ensure it doesn't go below 1
+    cart_item.quantity = max(0, cart_item.quantity - 1)
+    cart_item.save()
+
+    # If the quantity becomes zero, remove the item from the cart
+    if cart_item.quantity == 0:
+        cart_item.delete()
+
+    # Update the total price
+    cart = Cart.objects.get(user=request.user)
+    cart.update_total_price()
+
+    return redirect('view_cart')
+
+@login_required
+def increase_quantity(request, cart_item_id):
+    cart_item = get_object_or_404(CartItem, id=cart_item_id)
+    
+    # Increase the quantity
+    cart_item.quantity += 1
+    cart_item.save()
+
+    # Update the total price
+    cart = Cart.objects.get(user=request.user)
+    cart.update_total_price()
+
+    return redirect('view_cart')
+
+def remove_from_cart(user, cart_item_id):
+    cart_item = get_object_or_404(CartItem, id=cart_item_id)
+    
+    cart_item.delete()
+    return redirect('view_cart')
 
 
-# def update_quantity(user, cart_item_id, new_quantity):
-#     cart = Cart.objects.get(user=user)
-#     cart_item = CartItem.objects.get(id=cart_item_id)
-#     cart_item.quantity = new_quantity
-#     cart_item.save()
-#     cart.save()
-
-# def get_cart_total(user):
-#     cart = Cart.objects.get(user=user)
-#     return cart.total_price

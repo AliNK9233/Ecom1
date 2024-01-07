@@ -59,6 +59,10 @@ class Variant(models.Model):
     color = models.CharField(max_length=50)
     stock = models.IntegerField()
     price_modifier = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,default=500)
+
     ram = models.CharField(max_length=50, null=True, blank=True)
     storage = models.CharField(max_length=50, null=True, blank=True)
     battery = models.CharField(max_length=50, null=True, blank=True)
