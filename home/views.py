@@ -26,13 +26,10 @@ def product_details(request, variant_id):
     return render(request, 'product_details.html', {'variant': variant, 'variants': variants, 'selected_variant': variant})
 
 
-def admin_stock(request):
 
-    dict_stock = {
-        'stock': Variant.objects.all()
-    }
-
-    return render(request,'admin_stock.html',dict_stock)
+def product_by_category(request, category_id):
+    variants = Variant.objects.filter(product__category=category_id).all()
+    return render(request, 'products_by_category.html', {'variants': variants})
 
 
 

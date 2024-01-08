@@ -3,72 +3,42 @@
 
 {% load static %}
 {% block title %}
-Admin Panel
+Order list
 {% endblock %}
 
 {% block content %}
 
-<table id="result_list">
-    <thead>
-      <tr>
-        <th scope="col" class="sortable column-id">
-          <div class="text"><span>{% trans "Order ID" %}</span></div>
-          <div class="clear"></div>
-        </th>
-        <th scope="col" class="sortable column-user">
-          <div class="text"><span>{% trans "User" %}</span></div>
-          <div class="clear"></div>
-        </th>
-        <th scope="col" class="sortable column-total_price">
-          <div class="text"><span>{% trans "Total Price" %}</span></div>
-          <div class="clear"></div>
-        </th>
-        <th scope="col" class="sortable column-order_date">
-          <div class="text"><span>{% trans "Order Date" %}</span></div>
-          <div class="clear"></div>
-        </th>
-        <th scope="col" class="sortable column-delivery_status">
-          <div class="text"><span>{% trans "Delivery Status" %}</span></div>
-          <div class="clear"></div>
-        </th>
-        <th scope="col" class="sortable column-payment_status">
-          <div class="text"><span>{% trans "Payment Status" %}</span></div>
-          <div class="clear"></div>
-        </th>
-        <th scope="col" class="sortable column-payment_type">
-          <div class="text"><span>{% trans "Payment Type" %}</span></div>
-          <div class="clear"></div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-    <tr class="{% cycle 'row1' 'row2' %}" {% if order.delivery_status == 'Delivered' %}style="background-color: #c8e6c9;"{% endif %}>
-        <td class="field-id">{{ order.id }}</td>
-        <td class="field-user">{{ order.user.username }}</td>
-        <td class="field-total_price">₹{{ order.total_price }}</td>
-        <td class="field-order_date">{{ order.order_date }}</td>
-        <td class="field-delivery_status">
-            <select name="delivery_status" id="delivery_status_{{ order.id }}" class="select2">
-                {% for choice in delivery_status_choices %}
-                    <option value="{{ choice.0 }}" {% if order.delivery_status == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td class="field-payment_status">
-            <select name="payment_status" id="payment_status_{{ order.id }}" class="select2">
-                {% for choice in payment_status_choices %}
-                    <option value="{{ choice.0 }}" {% if order.payment_status == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td class="field-payment_type">{{ order.get_payment_type_display }}</td>
-    </tr>
-{% endfor %}
 
-    
-    </tbody>
-  </table>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Total Price</th>
+      <th>Order Date</th>
+      <th>Payment Status</th>
+      <th>Delivery Status</th>
+      <th>Payment Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr>
+      <td>{{ order.id }}</td>
+      <td>{{ order.user.username }}</td>
+      <td>{{ order.total_price }}</td>
+      <td>{{ order.order_date }}</td>
+      <td>{{ order.payment_status }}</td>
+      <td>{{ order.delivery_status }}</td>
+      <td>{{ order.payment_type }}</td>
+      <td>
+        <a href="{% url 'edit_order' order.id %}" class="btn btn-primary">Edit</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 
 

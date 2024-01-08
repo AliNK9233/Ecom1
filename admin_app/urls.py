@@ -15,9 +15,7 @@ urlpatterns = [
     path('delete_category/<int:category_id>/', views.delete_category, name='delete_category'),
 
     path('admin_order_list/', views.admin_order_list, name='admin_order_list'),
-    path('mark-as-shipped/', views.mark_as_shipped, name='mark_as_shipped'),
-    path('mark-as-delivered/', views.mark_as_delivered, name='mark_as_delivered'),
-    path('cancel-orders/', views.cancel_orders, name='cancel_orders'),
+    path('edit_order/<int:order_id>/', views.edit_order, name='edit_order'),
 
 
   

@@ -155,7 +155,7 @@ def add_address(request):
 
 
 def change_password(request):
-    print("Change Password View Accessed")  # Add this line
+   
 
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)

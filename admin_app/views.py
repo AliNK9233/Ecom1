@@ -3,6 +3,8 @@ from audioop import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from orders.models import Order
+from .forms import OrderForm
+
 from home.models import UserProfile,Category
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
@@ -118,29 +120,17 @@ def admin_order_list(request):
     }
     return render(request, 'admin/order_list.html', context)
 
-@staff_member_required
-def mark_as_shipped(request):
+def edit_order(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
     if request.method == 'POST':
-        order_ids = request.POST.getlist('_selected_action')
-        Order.objects.filter(id__in=order_ids).update(delivery_status='Shipped')
-        messages.success(request, 'Selected orders marked as Shipped.')
-    return HttpResponseRedirect(reverse('admin:admin_order_list'))
-
-@staff_member_required
-def mark_as_delivered(request):
-    if request.method == 'POST':
-        order_ids = request.POST.getlist('_selected_action')
-        Order.objects.filter(id__in=order_ids).update(delivery_status='Delivered')
-        messages.success(request, 'Selected orders marked as Delivered.')
-    return HttpResponseRedirect(reverse('admin:admin_order_list'))
-
-@staff_member_required
-def cancel_orders(request):
-    if request.method == 'POST':
-        order_ids = request.POST.getlist('_selected_action')
-        Order.objects.filter(id__in=order_ids).update(delivery_status='Cancelled')
-        messages.success(request, 'Selected orders canceled.')
-    return HttpResponseRedirect(reverse('admin:admin_order_list'))
+        form = OrderForm(request.POST, instance=order)  
+        if form.is_valid():
+            form.save()
+            
+            return redirect('admin_order_list')  
+    else:
+        form = OrderForm(instance=order)  # Pre-fill form for editing
+    return render(request, 'admin/edit_order.html', {'form': form})
 
 
 
