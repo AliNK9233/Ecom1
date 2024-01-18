@@ -4,7 +4,7 @@
 {% block title %}Product Details{% endblock %}
 
 {% block content %}
-
+<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/alertify.min.js"></script>
 <section class="product-details mt-5 mb-5">
   <div class="container">
     <div class="row g-4">
@@ -64,7 +64,11 @@
         </section>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <a href="{% url 'add_to_cart' variant.id %}" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Add to Cart</a>
+          {% csrf_token %}
+          <input type="hidden" class="var_id" value="{{variant.id}}">
+          <input type="hidden" class="var_name" value="{{ variant.product.name|add:variant.color }}">
+          <input type="number" class="var_qty" value="1" min="1">
+          <a href="#" id="add_to_cart_btn" class="btn btn-primary"><i class="fas fa-cart-plus " ></i> Add to Cart</a>
           <a href="#" class="btn btn-outline-primary"><i class="far fa-heart"></i> Add to Wishlist</a>
         </div>
 
@@ -83,6 +87,35 @@
   function changeImage(image) {
     document.getElementById("mainImage").src = image.src;
   }
+
+  $('#add_to_cart_btn').click(function(e){
+    e.preventDefault();
+
+    var var_id = $('.var_id').val();
+    var var_qty = $('.var_qty').val();
+    var var_name = $('.var_name').val();
+    var token = $('input[name=csrfmiddlewaretoken]').val();
+
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'add_to_cart' %}",
+      data: {
+        'product_id':var_id,
+        'product_qty':var_qty,
+        'product_name':var_name,
+        csrfmiddlewaretoken:token
+      },
+      
+      success: function (response) {
+        console.log(response)
+        alertify.success(response.status)
+      }
+    });
+
+  })
+
+
   </script>
 
 {% endblock %}

@@ -1,5 +1,8 @@
 
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+
+from cart.models import UserCart
 from .models import Category,Variant,Product
 from django.shortcuts import render
 
@@ -33,4 +36,25 @@ def product_by_category(request, category_id):
 
 
 
+def add_to_cart(request,):
+    if request.method == 'POST':
+        prod_id = int(request.POST.get('product_id'))
+        product_check = Variant.objects.get(id=prod_id)
+
+        if(product_check):
+            if(UserCart.objects.filter(user=request.user.id,product=prod_id)):
+                return JsonResponse({'status':"Product Already in Cart"})
+            else:
+                prod_qty = int(request.POST.get('product_qty'))
+                prod_name = request.POST.get('product_name')
+
+                if product_check.stock >= prod_qty:
+                    UserCart.objects.create(user=request.user,product_id=prod_id,title=prod_name,quantity=prod_qty)
+                    return JsonResponse({'status':"Product added to cart"})
+                else:
+                    return JsonResponse({'status':"Only"+str(product_check.stock)+"available"})
+        else:
+            return JsonResponse({'status':"No such product found"})
     
+
+    return redirect('view_cart')  # Redirect to the product details page    
