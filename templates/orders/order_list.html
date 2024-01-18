@@ -29,7 +29,9 @@
         <td>
             {% if order.delivery_status == 'Pending' or order.delivery_status == 'Shipped' %} 
             <a href="{% url 'order_tracking' order.id %}" class="btn btn-sm btn-primary">Track Order</a>
-          {% endif %}
+            {% else %}
+            <a href="{% url 'order_invoice' order.id %}" class="btn btn-sm btn-primary">Invoice</a>
+            {% endif %}
         </td>
       </tr>
       {% endfor %}

@@ -86,4 +86,8 @@ def change_address(request, order_id):
     
 
 
-   
+def order_invoice(request, order_id):
+     order = get_object_or_404(Order, id=order_id)
+
+     context = {'order': order}
+     return render(request, 'orders/invoice.html',context )
