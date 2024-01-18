@@ -5,29 +5,9 @@
 <div class="container">
   <h1 class="mb-4">Thank You for Your Order!</h1>
 
-  <p>Your order (#{{ order.id }}) has been successfully placed.</p>
+  <p>Your order  has been successfully placed.</p>
 
-  <h2 class="mt-4">Order Summary</h2>
-  <ul class="list-group">
-    {% for item in order.order_items.all %}
-    <li class="list-group-item">
-      {{ item.product_variant.product.name }} x {{ item.quantity }} - ₹{{ item.subtotal }}
-    </li>
-    {% endfor %}
-    <li class="list-group-item d-flex justify-content-between">
-      <strong>Total:</strong>
-      <span>₹{{ order.total_price }}</span>
-    </li>
-  </ul>
-
-  <h2 class="mt-4">Delivery Information</h2>
-  <p>Shipping Address: {{ order.shipping_address.street_address }}, {{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.zip_code }}</p>
-
-  <h2 class="mt-4">Payment Information</h2>
-  <p>Payment Method: {{ order.payment_type }}</p>
-
-  <p class="mt-4">Thank you for shopping with us!</p>
-  <a href="{% url 'order_tracking' order.id %}" class="btn btn-primary">Track Your Order</a>
+  
 </div>
 
 {% endblock %}

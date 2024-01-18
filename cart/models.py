@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -33,8 +34,9 @@ class UserCart(models.Model):
     title = models.TextField(default=1)
     timestamp = models.DateTimeField(auto_now_add=True)
     
+    @property
     def sub_total(self):
-        return self.quantity * self.product.price
+        return Decimal(self.quantity) * self.product.price
 
     def __str__(self):
         return self.title

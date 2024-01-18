@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from cart.models import Cart
+from cart.models import Cart, UserCart
 from user_app.models import Address
 from .models import Order
 
@@ -18,7 +18,8 @@ def order_list(request):
 
 def checkout(request):
     user = request.user
-    cart = Cart.objects.get(user=user)
+    cart =  UserCart.objects.filter(user=user)
+    total_price = sum(item.sub_total for item in cart)
     addresses = Address.objects.filter(user=user)
     
     # Assume you have a list of predefined payment types
@@ -34,23 +35,23 @@ def checkout(request):
 
             order = Order.objects.create(
                 user=user,
-                total_price=cart.total_price,
+                total_price=total_price,
                 payment_status='Pending',
                 delivery_status='Pending',
                 payment_type=payment_type,
                 shipping_address=shipping_address,
             )
 
-            order.items.set(cart.items.all())
+            order.cart_items.set(cart)
 
             # Clear the cart after creating the order
-            cart.items.clear()
-            cart.total_price = 0
-            cart.save()
+            cart.delete()
+        
 
-            return render(request, 'orders/thank_you_page.html', {'order': order})
+            return render(request, 'orders/thank_you_page.html',)
+    context = {'cart_items': cart, 'total_price': total_price,'addresses': addresses, 'payment_types': payment_types}
 
-    return render(request, 'orders/checkout.html', {'cart_items': cart.items.all(), 'total_price': cart.total_price, 'addresses': addresses, 'payment_types': payment_types})
+    return render(request, 'orders/checkout.html',context )
 
 def order_tracking(request, order_id):
     addresses = Address.objects.filter(user=request.user)

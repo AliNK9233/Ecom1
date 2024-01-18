@@ -13,8 +13,8 @@
           <ul class="list-group">
             {% for item in cart_items %}
             <li class="list-group-item">
-              <img src="{{ item.product_variant.image.url }}" alt="{{ item.product_variant.name }}" class="img-thumbnail mr-2" style="width: 50px;">
-              {{ item.product_variant.name }} x {{ item.quantity }} - ₹{{ item.product_variant.price }}
+              <img src="{{ item.product.image.url }}" alt="{{ item.title }}" class="img-thumbnail mr-2" style="width: 50px;">
+              {{ item.title }} x {{ item.quantity }} - ₹{{ item.sub_total }}
             </li>
             {% endfor %}
             <li class="list-group-item d-flex justify-content-between">
