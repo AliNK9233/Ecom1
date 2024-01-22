@@ -1,6 +1,7 @@
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.views import View
 from .import models
 from orders.models import Order
 from .forms import OrderForm
@@ -14,6 +15,10 @@ from django.db.models import Count,F,Sum
 from django.db.models.functions import ExtractMonth
 from django.db.models.functions import ExtractQuarter
 import csv
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.pagesizes import letter
 # Create your views here.
 
 @user_passes_test(lambda u: u.is_staff)
@@ -179,3 +184,41 @@ def export_orders_to_csv(request):
         writer.writerow([order.id, order.user.username, order.total_price, order.order_date, order.payment_status, order.delivery_status, order.payment_type])
 
     return response
+
+
+class ExportOrdersToPDF(View):
+    def get(self, request, *args, **kwargs):
+        # Create a response object
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="orders.pdf"'
+
+        # Create a PDF document
+        pdf_buffer = SimpleDocTemplate(response, pagesize=letter)
+
+        # Table data
+        table_data = [['Order ID', 'User', 'Total Price', 'Order Date', 'Payment Status', 'Delivery Status', 'Payment Type']]
+
+        # Fetch orders from the database
+        orders = Order.objects.all()
+
+        # Add order data to the table
+        for order in orders:
+            order_data = [order.id, order.user.username, order.total_price, order.order_date, order.payment_status, order.delivery_status, order.payment_type]
+            table_data.append(order_data)
+
+        # Create a table and set styles
+        order_table = Table(table_data)
+        order_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
+
+        # Build PDF document
+        pdf_buffer.build([order_table])
+
+        return response

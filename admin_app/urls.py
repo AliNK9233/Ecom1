@@ -1,7 +1,7 @@
 
 from . import views
 from django.urls import path
-
+from .views import ExportOrdersToPDF
 
 urlpatterns = [
 
@@ -18,10 +18,11 @@ urlpatterns = [
     path('edit_order/<int:order_id>/', views.edit_order, name='edit_order'),
 
     path('export-orders-to-csv/', views.export_orders_to_csv, name='export_orders_to_csv'),
+    path('export-orders-to-pdf/', ExportOrdersToPDF.as_view(), name='export_orders_to_pdf'),
+]
 
 
   
     
 
     
-] 
