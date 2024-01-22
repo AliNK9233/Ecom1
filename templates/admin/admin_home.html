@@ -14,7 +14,7 @@ Admin Panel
 <div class="container mt-5">
   <div class="row m-4">
     <div class="col-md-6">
-        <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
+      <a href="{% url 'export_orders_to_csv' %}" class="btn btn-primary">Export Orders to CSV</a>
     </div>
     <div class="col-md-6">
         <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
@@ -142,7 +142,19 @@ Admin Panel
           colors.push(color);
       }
       return colors;
-  }
+  };
+
+
+  function exportToPDF() {
+    // Add your logic to export data to PDF
+    alert("Exporting to PDF...");
+};
+
+// Export to Excel function
+function exportToExcel() {
+    // Add your logic to export data to Excel
+    alert("Exporting to Excel...");
+}
 </script>
 
   

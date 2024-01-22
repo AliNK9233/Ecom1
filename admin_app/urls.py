@@ -17,6 +17,8 @@ urlpatterns = [
     path('admin_order_list/', views.admin_order_list, name='admin_order_list'),
     path('edit_order/<int:order_id>/', views.edit_order, name='edit_order'),
 
+    path('export-orders-to-csv/', views.export_orders_to_csv, name='export_orders_to_csv'),
+
 
   
     

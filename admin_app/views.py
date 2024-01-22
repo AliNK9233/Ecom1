@@ -13,6 +13,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count,F,Sum
 from django.db.models.functions import ExtractMonth
 from django.db.models.functions import ExtractQuarter
+import csv
 # Create your views here.
 
 @user_passes_test(lambda u: u.is_staff)
@@ -162,3 +163,19 @@ def edit_order(request, order_id):
 
 
 
+def export_orders_to_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+
+    # Create a CSV writer
+    writer = csv.writer(response)
+
+    # Write header row
+    writer.writerow(['Order ID', 'User', 'Total Price', 'Order Date', 'Payment Status', 'Delivery Status', 'Payment Type'])
+
+    # Write data rows
+    orders = Order.objects.all()
+    for order in orders:
+        writer.writerow([order.id, order.user.username, order.total_price, order.order_date, order.payment_status, order.delivery_status, order.payment_type])
+
+    return response
