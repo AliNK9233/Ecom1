@@ -1,24 +1,52 @@
 
-from audioop import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from .import models
 from orders.models import Order
 from .forms import OrderForm
-
 from home.models import UserProfile,Category
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
-
+from django.db.models import Count,F,Sum
+from django.db.models.functions import ExtractMonth
+from django.db.models.functions import ExtractQuarter
 # Create your views here.
 
 @user_passes_test(lambda u: u.is_staff)
 def admin_home(request):
+
+
+
+
+    data = Order.objects.annotate(month=ExtractMonth('order_date')).values('month').annotate(order_count=Count('id'))
+    data_amount = Order.objects.annotate(month=ExtractMonth('order_date')).values('month').annotate(order_amount=Sum('total_price'))
+
+    month_labels_amount = [f'Month {entry["month"]}' for entry in data_amount]
+    monthly_amount = [entry['order_amount'] for entry in data_amount]
     
 
-    return render(request,'admin/admin_home.html')
+    month_labels = [f'Month {entry["month"]}' for entry in data]
+    monthly_values = [entry['order_count'] for entry in data]
+
+
+    
+    order_counts_by_status = Order.objects.annotate(
+        status=F('delivery_status'),).values('status').annotate(count=Count('pk'))
+
+    context = {
+        'order_counts_by_status': order_counts_by_status,
+        'month_labels' : month_labels,
+        'monthly_values' : monthly_values,
+        'month_labels_amount': month_labels_amount,
+        'monthly_amount': monthly_amount,
+       
+
+    }
+    return render(request,'admin/admin_home.html', context)
+    
 
 @user_passes_test(lambda u: u.is_staff)
 def user_management(request):

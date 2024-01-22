@@ -7,79 +7,144 @@ Admin Panel
 {% endblock %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-  <div class="container">
-      <h1>Order Statistics</h1>
-      <div>
-          <!-- Bar Chart -->
-          <canvas id="barChart" width="400" height="200"></canvas>
+
+<div class="container mt-5">
+  <div class="row m-4">
+    <div class="col-md-6">
+        <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
+    </div>
+    <div class="col-md-6">
+        <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
+    </div>
+  </div>
+
+
+  <div class="row">
+      <div class="col-md-6 mb-4">
+          <div class="card">
+              <h5 class="card-header">Category Sales</h5>
+              <div class="card-body">
+                  <canvas id="pieChart1" width="400" height="200"></canvas>
+              </div>
+          </div>
       </div>
-      <div>
-          <!-- Pie Chart -->
-          <canvas id="pieChart" width="400" height="200"></canvas>
+
+      <div class="col-md-6 mb-4">
+          <div class="card">
+              <h5 class="card-header">Monthly Sales</h5>
+              <div class="card-body">
+                  <canvas id="barChart" width="400" height="200"></canvas>
+              </div>
+          </div>
       </div>
   </div>
 
-  <script>
-      // Assume orders_data is a list of dictionaries containing order statistics
-      // Replace this with your actual data
-      var orders_data = [
-          { status: 'Pending', count: 10 },
-          { status: 'Paid', count: 20 },
-          // Add more data points as needed
-      ];
+  <div class="row">
+      <div class="col-md-6 mb-4">
+          <div class="card">
+              <h5 class="card-header">Monthly Sales Amount</h5>
+              <div class="card-body">
+                  <canvas id="barChartAmount" width="400" height="200"></canvas>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
 
-      // Bar Chart
-      var barChartCanvas = document.getElementById('barChart').getContext('2d');
-      var barChartData = {
-          labels: orders_data.map(item => item.status),
+<script>
+  var labels = [];
+  var data = [];
+
+  {% for status in order_counts_by_status %}
+      {% if status.status == 'Pending' %}
+          labels.push("Pending Orders");
+      {% elif status.status == 'Shipped' %}
+          labels.push("Shipped Orders");
+      {% elif status.status == 'Cancelled' %}
+          labels.push("Cancelled Orders");
+      {% elif status.status == 'Delivered' %}
+          labels.push("Delivered Orders");
+      {% endif %}
+      data.push({{ status.count }});
+  {% endfor %}
+
+  var backgroundColors = generateRandomColors(data.length);
+
+  var ctx1 = document.getElementById('pieChart1').getContext('2d');
+  var myPieChart1 = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+          labels: labels,
           datasets: [{
-              label: 'Order Status',
-              data: orders_data.map(item => item.count),
-              backgroundColor: 'rgba(75, 192, 192, 0.2)', // Customize the background color
-              borderColor: 'rgba(75, 192, 192, 1)', // Customize the border color
+              data: data,
+              backgroundColor: backgroundColors,
+          }]
+      },
+  });
+
+  // Bar chart
+  var ctx = document.getElementById('barChart').getContext('2d');
+  var myBarChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: {{ month_labels | safe }},
+          datasets: [{
+              label: 'Order Count',
+              data: {{ monthly_values | safe }},
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
               borderWidth: 1
           }]
-      };
-
-      var barChart = new Chart(barChartCanvas, {
-          type: 'bar',
-          data: barChartData,
-          options: {
-              scales: {
-                  y: {
-                      beginAtZero: true
-                  }
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
               }
           }
-      });
+      }
+  });
 
-      // Pie Chart
-      var pieChartCanvas = document.getElementById('pieChart').getContext('2d');
-      var pieChartData = {
-          labels: orders_data.map(item => item.status),
-          datasets: [{
-              data: orders_data.map(item => item.count),
-              backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)', // Customize the background color
-                  'rgba(54, 162, 235, 0.2)',
-                  // Add more colors as needed
-              ],
-              borderColor: [
-                  'rgba(255, 99, 132, 1)', // Customize the border color
-                  'rgba(54, 162, 235, 1)',
-                  // Add more colors as needed
-              ],
-              borderWidth: 1
-          }]
-      };
+  var labelsAmount = {{ month_labels_amount | safe }};
+  var dataAmount = {{ monthly_amount | safe }};
+  
+  var ctxAmount = document.getElementById('barChartAmount').getContext('2d');
+    var myBarChartAmount = new Chart(ctxAmount, {
+        type: 'bar',
+        data: {
+            labels: labelsAmount,
+            datasets: [{
+                label: 'Monthly Sales Amount',
+                data: dataAmount,
+                backgroundColor: backgroundColorsAmount,
+                borderColor: backgroundColorsAmount,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
-      var pieChart = new Chart(pieChartCanvas, {
-          type: 'pie',
-          data: pieChartData,
-      });
-  </script>
+  // Function to generate random colors
+  function generateRandomColors(count) {
+      var colors = [];
+      for (var i = 0; i < count; i++) {
+          // Generate a random color in hex format
+          var color = '#' + Math.floor(Math.random()*16777215).toString(16);
+          colors.push(color);
+      }
+      return colors;
+  }
+</script>
+
   
   
 
