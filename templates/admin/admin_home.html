@@ -8,11 +8,78 @@ Admin Panel
 
 {% block content %}
 
-<div class="container-fluid">
-  <h1 class="text-center mb-4">Dashboard</h1>
-  
 
-</div>
+  <div class="container">
+      <h1>Order Statistics</h1>
+      <div>
+          <!-- Bar Chart -->
+          <canvas id="barChart" width="400" height="200"></canvas>
+      </div>
+      <div>
+          <!-- Pie Chart -->
+          <canvas id="pieChart" width="400" height="200"></canvas>
+      </div>
+  </div>
+
+  <script>
+      // Assume orders_data is a list of dictionaries containing order statistics
+      // Replace this with your actual data
+      var orders_data = [
+          { status: 'Pending', count: 10 },
+          { status: 'Paid', count: 20 },
+          // Add more data points as needed
+      ];
+
+      // Bar Chart
+      var barChartCanvas = document.getElementById('barChart').getContext('2d');
+      var barChartData = {
+          labels: orders_data.map(item => item.status),
+          datasets: [{
+              label: 'Order Status',
+              data: orders_data.map(item => item.count),
+              backgroundColor: 'rgba(75, 192, 192, 0.2)', // Customize the background color
+              borderColor: 'rgba(75, 192, 192, 1)', // Customize the border color
+              borderWidth: 1
+          }]
+      };
+
+      var barChart = new Chart(barChartCanvas, {
+          type: 'bar',
+          data: barChartData,
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+
+      // Pie Chart
+      var pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+      var pieChartData = {
+          labels: orders_data.map(item => item.status),
+          datasets: [{
+              data: orders_data.map(item => item.count),
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)', // Customize the background color
+                  'rgba(54, 162, 235, 0.2)',
+                  // Add more colors as needed
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)', // Customize the border color
+                  'rgba(54, 162, 235, 1)',
+                  // Add more colors as needed
+              ],
+              borderWidth: 1
+          }]
+      };
+
+      var pieChart = new Chart(pieChartCanvas, {
+          type: 'pie',
+          data: pieChartData,
+      });
+  </script>
   
   
 

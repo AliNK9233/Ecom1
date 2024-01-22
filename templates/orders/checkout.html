@@ -18,8 +18,10 @@
             </li>
             {% endfor %}
             <li class="list-group-item d-flex justify-content-between">
-              <strong>Total:</strong>
-              <span>₹{{ total_price }}</span>
+              <div id="totalAmount" class="mb-3">
+                <label>Total Amount:</label>
+                <span>₹{{ total_price }}</span>
+              </div>
             </li>
           </ul>
         </div>
@@ -47,6 +49,14 @@
                 {% endfor %}
               </select>
             </div>
+            <div class="mb-3">
+              <label for="coupon_code" class="form-label">Coupon Code:</label>
+              <input type="text" id="coupon_code" name="coupon_code" class="form-control" placeholder="Enter your coupon code">
+              <button type="button" id="apply_coupon" class="btn btn-secondary">Apply Coupon</button>
+          </div>
+            <!-- Add the button for adding coupon here -->
+            
+
             <button type="submit" class="btn btn-primary">Place Order</button>
           </form>
         </div>
@@ -54,5 +64,40 @@
     </div>
   </div>
 </div>
+
+
+
+
+<script>
+  $(document).ready(function () {
+      
+    $("#apply_coupon").click(function () {
+        
+        var couponCode = $("#coupon_code").val();
+        
+        // Assuming you have a 'total_amount' ID for the span containing the total amount
+        var total = parseFloat($("#totalAmount span").text().replace('₹', ''));
+        console.log(couponCode);
+        console.log(total);
+        
+        $.ajax({
+            type: "POST",
+            url: "{% url 'apply_coupon' %}", 
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+                coupon_code: couponCode
+            },
+            success: function (response) {
+                // Update the total amount on success
+                $("#total_amount").text("₹" + response.total_amount);
+            },
+            error: function () {
+                // Handle errors if needed
+                alert("Error applying coupon. Please try again.");
+            }
+        });
+    });
+});
+</script>
 
 {% endblock %}

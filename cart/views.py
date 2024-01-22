@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.db.models import Sum
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
@@ -13,7 +13,7 @@ def view_cart(request):
     user = request.user
 
     # Retrieve the user's cart
-    cart= UserCart.objects.filter(user=user)
+    cart= UserCart.objects.filter(Q(user=user) & Q(is_checkout_done=False))
 
     cart_total = sum(Decimal(item.sub_total) for item in cart)
 

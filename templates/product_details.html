@@ -4,7 +4,7 @@
 {% block title %}Product Details{% endblock %}
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/alertify.min.js"></script>
+
 <section class="product-details mt-5 mb-5">
   <div class="container">
     <div class="row g-4">
@@ -95,6 +95,8 @@
     var var_qty = $('.var_qty').val();
     var var_name = $('.var_name').val();
     var token = $('input[name=csrfmiddlewaretoken]').val();
+
+
 
 
     $.ajax({

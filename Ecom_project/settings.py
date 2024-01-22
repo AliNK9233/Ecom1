@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'admin_app',
     'cart',
     'orders',
+    'coupon_app',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +138,5 @@ AUTH_TOKEN='307809956779f6e223e11e387be8d713'
 COUNTRY_CODE='+91'
 TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
 TWILIO_PHONE_NUMBER='+14028356471'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'

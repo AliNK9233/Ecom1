@@ -17,6 +17,17 @@
         <p class="card-text">Total Price: ₹{{ order.total_price }}</p>
         <p class="card-text">Delivery Status: {{ order.delivery_status }}</p>
 
+        <!-- Display ordered items -->
+        <h3 class="mt-4">Ordered Items:</h3>
+        <ul class="list-group">
+          {% for item in order.cart_items.all %}
+            <li class="list-group-item">
+              {{ item.title }} (Quantity: {{ item.quantity }})
+              - ₹{{ item.sub_total }}
+            </li>
+          {% endfor %}
+        </ul>
+
         {% if order.delivery_status == 'Pending' %}
           <form action="{% url 'cancel_order' order.id %}" method="post">
             {% csrf_token %}

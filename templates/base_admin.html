@@ -46,7 +46,7 @@
                 <a class="nav-link" href="{% url "category" %}">Categories</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Coupons</a>
+                <a class="nav-link" href="{% url 'coupon_list' %}">Coupons</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'admin_product' %}">Products</a>
@@ -85,10 +85,10 @@
 
   <!-- footer -->
 
-  <footer class="d-flex align-items-center justify-content-between py-3 bg-dark text-white">
+  {% comment %} <footer class="d-flex align-items-center justify-content-between py-3 bg-dark text-white">
     <span>Copyright &copy; 2023 Your Company Name</span>
     <span>Version: X.Y.Z | Active Users: <span id="userCount"></span></span>
-  </footer>
+  </footer> {% endcomment %}
   
 
   

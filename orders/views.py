@@ -1,14 +1,18 @@
+from decimal import Decimal
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from coupon_app.models import Coupon
 from cart.models import Cart, UserCart
 from user_app.models import Address
 from .models import Order
-
+from django.db.models import Q
+from django.utils import timezone
 
 # Create your views here.
 
 def order_list(request):
     # Retrieve all orders
-    orders = Order.objects.all()
+    orders = Order.objects.filter(user=request.user)
 
     context = {
         'orders': orders
@@ -18,20 +22,32 @@ def order_list(request):
 
 def checkout(request):
     user = request.user
-    cart =  UserCart.objects.filter(user=user)
+    cart = UserCart.objects.filter(Q(user=user) & Q(is_checkout_done=False))
     total_price = sum(item.sub_total for item in cart)
     addresses = Address.objects.filter(user=user)
-    
-    # Assume you have a list of predefined payment types
     payment_types = ['Credit Card', 'Cash on Delivery', 'UPI']
 
+    saved_amount = 0  # Default value for saved_amount
+    applied_coupon = None  # Default value for applied_coupon
+
     if request.method == 'POST':
-        # Process form submission and create an order
         shipping_address_id = request.POST.get('shipping_address')
         payment_type = request.POST.get('payment_type')
+        coupon_code = request.POST.get('coupon_code')
 
         if shipping_address_id and payment_type:
             shipping_address = Address.objects.get(id=shipping_address_id)
+
+            if coupon_code:
+                coupon = get_object_or_404(Coupon, code=coupon_code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now())
+                discount_amount = Decimal(coupon.discount_percent) / Decimal(100) * total_price
+                total_price -= discount_amount
+
+                saved_amount = discount_amount
+                applied_coupon = coupon
+
+                coupon.current_usage_count += 1
+                coupon.save()
 
             order = Order.objects.create(
                 user=user,
@@ -44,12 +60,16 @@ def checkout(request):
 
             order.cart_items.set(cart)
 
-            # Clear the cart after creating the order
-            cart.delete()
-        
+            # Set is_checkout_done to True for each item in the cart
+            for item in cart:
+                item.is_checkout_done = True
+                item.save()
 
-            return render(request, 'orders/thank_you_page.html',)
-    context = {'cart_items': cart, 'total_price': total_price,'addresses': addresses, 'payment_types': payment_types}
+            return render(request, 'orders/thank_you_page.html', {'order': order, 'saved_amount': saved_amount, 'applied_coupon': applied_coupon})
+
+    context = {'cart_items': cart, 'total_price': total_price, 'addresses': addresses, 'payment_types': payment_types}
+    return render(request, 'orders/checkout.html', context)
+
 
     return render(request, 'orders/checkout.html',context )
 
@@ -91,3 +111,24 @@ def order_invoice(request, order_id):
 
      context = {'order': order}
      return render(request, 'orders/invoice.html',context )
+
+def apply_coupon(request):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+
+        # Include the logic to calculate total_price
+        user = request.user
+        cart = UserCart.objects.filter(Q(user=user) & Q(is_checkout_done=False))
+        total_price = sum(item.sub_total for item in cart)
+
+        coupon = get_object_or_404(Coupon, code=coupon_code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now())
+
+        discounted_total = total_price - (total_price * (coupon.discount_percent / 100))
+
+        coupon.current_usage_count += 1
+        coupon.save()
+
+        return JsonResponse({'total_amount': discounted_total})
+
+    # Handle invalid requests or other scenarios
+    return JsonResponse({'error': 'Invalid request'}, status=400)

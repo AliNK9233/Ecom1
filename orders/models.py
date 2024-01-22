@@ -1,11 +1,10 @@
-
 from django.db import models
 from user_app.models import Address
-
 from django.db import models
 from django.contrib.auth.models import User
-
 from cart.models import  UserCart
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -19,9 +18,23 @@ class Order(models.Model):
     delivery_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Shipped', 'Shipped'), ('Delivered', 'Delivered'), ('Cancelled', 'Cancelled')], default='Pending')
     payment_type = models.CharField(max_length=20, choices=[('Credit Card', 'Credit Card'), ('Cash on Delivery', 'Cash on Delivery'),('UPI', 'UPI')])
     shipping_address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
+    delivered_date = models.DateTimeField(null=True, blank=True)
+    
+    def update_delivered_date(self):
+        if self.delivery_status == 'Delivered' and not self.delivered_date:
+            self.delivered_date = timezone.now()
+            self.save()
 
 
     def __str__(self):
         return f"Order #{self.id} - {self.user.username}"
+    
+# Signal to automatically update delivered date when an order is saved
+@receiver(post_save, sender=Order)
+def update_delivered_date(sender, instance, **kwargs):
+    instance.update_delivered_date()
+    
+
+
     
 

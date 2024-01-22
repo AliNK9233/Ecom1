@@ -5,8 +5,15 @@
 <div class="container">
   <h1 class="mb-4">Thank You for Your Order!</h1>
 
-  <p>Your order  has been successfully placed.</p>
+  <p>Your order has been successfully placed.</p>
 
+  {% if order %}
+    <p>Order ID: {{ order.id }}</p>
+    <p>Total Price: ₹{{ order.total_price }}</p>
+    {% if applied_coupon %}
+      <p>You saved ₹{{ saved_amount }} with the coupon: {{ applied_coupon.code }}</p>
+    {% endif %}
+  {% endif %}
   
 </div>
 

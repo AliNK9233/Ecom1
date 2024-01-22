@@ -33,6 +33,7 @@ class UserCart(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     title = models.TextField(default=1)
     timestamp = models.DateTimeField(auto_now_add=True)
+    is_checkout_done =models.BooleanField(default=False)
     
     @property
     def sub_total(self):
