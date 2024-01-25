@@ -5,7 +5,7 @@
 
 {% block content %}
 
-
+{% load socialaccount %}
 
 
 
@@ -41,6 +41,7 @@
         <button type="submit" class="btn btn-primary w-100">Send OTP</button>
       </form>
     </div>
+    <a href="{% provider_login_url 'google' %}">Login with Google</a>
     {% for message in messages %}
       <p> {{message}}
     {% endfor %}
