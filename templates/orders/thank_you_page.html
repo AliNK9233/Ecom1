@@ -5,16 +5,62 @@
 <div class="container">
   <h1 class="mb-4">Thank You for Your Order!</h1>
 
-  <p>Your order has been successfully placed.</p>
+  <p>Your order has been successfully placed. Please complete the payment to finalize your order.</p>
 
   {% if order %}
+    <h2>Order Details</h2>
     <p>Order ID: {{ order.id }}</p>
+    <p>Order Date: {{ order.order_date }}</p>
     <p>Total Price: ₹{{ order.total_price }}</p>
-    {% if applied_coupon %}
-      <p>You saved ₹{{ saved_amount }} with the coupon: {{ applied_coupon.code }}</p>
+    {% if order.payment_status == 'Pending' %}
+<p>Payment Status: {{ order.payment_status }} <span class="text-warning">(Pending payment)</span></p>
+<button type="button" class="btn btn-primary btn-sm" id="pay-now-button">
+  Complete Payment Now
+</button>
+{% else %}
+<p>Payment Status: {{ order.payment_status }}</p>
+{% endif %}
+    <p>Delivery Status: {{ order.delivery_status }}</p>
+    {% if order.shipping_address %}
+      <p>Shipping Address:</p>
+      <address>
+        {{ user.username }}<br>
+        {{ order.shipping_address.street }}<br>
+        {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}<br>
+       
+      </address>
     {% endif %}
+
+    <h2>Order Items</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cart_item in order.cart_items.all %}
+        <tr>
+          <td>{{ cart_item.title }}</td>
+          <td>{{ cart_item.quantity }}</td>
+          <td>₹{{ cart_item.product.price }}</td>
+          <td>₹{{ cart_item.sub_total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Total Price</td>
+          <td>₹{{ order.total_price }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+
   {% endif %}
-  
 </div>
 
 {% endblock %}

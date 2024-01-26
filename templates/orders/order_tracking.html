@@ -12,9 +12,18 @@
     <div class="card-body">
 
       {% if order %}
+
+      
         <h2 class="card-title">Order #{{ order.id }}</h2>
         <p class="card-text">Order Date: {{ order.order_date }}</p>
         <p class="card-text">Total Price: ₹{{ order.total_price }}</p>
+          {% if order.payment_status == 'Pending' %}
+            <p class="card-text text-info mb-4">Payment Status: {{ order.payment_status }} (Pending payment)</p>
+            <button type="button" class="btn btn-primary btn-sm px-5" id="pay-now-button">
+              Complete Payment Now
+            </button>
+          {% endif %}
+
         <p class="card-text">Delivery Status: {{ order.delivery_status }}</p>
 
         <!-- Display ordered items -->
@@ -27,6 +36,7 @@
             </li>
           {% endfor %}
         </ul>
+        
 
         {% if order.delivery_status == 'Pending' %}
           <form action="{% url 'cancel_order' order.id %}" method="post">
