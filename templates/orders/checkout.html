@@ -49,16 +49,18 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="mb-3">
-              <label for="coupon_code" class="form-label">Coupon Code:</label>
+            <div class="mb-3 input-group justify-content-center">
+              
+              
               <input type="text" id="coupon_code" name="coupon_code" class="form-control" placeholder="Enter your coupon code">
               <button type="button" id="apply_coupon" class="btn btn-secondary">Apply Coupon</button>
-          </div>
-            <!-- Add the button for adding coupon here -->
-            
-
-            <button type="submit" class="btn btn-primary">Place Order</button>
+            </div>
           </form>
+          <div id="paymentButtonContainer" class="mb-3">
+            <button type="submit" id="completePaymentButton" class="btn btn-primary" style="display: none;">Complete Payment</button>
+            <button id="placeOrderButton" class="btn btn-primary" type="submit">Place Order</button>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -97,6 +99,19 @@
             }
         });
     });
+});
+
+$(document).ready(function () {
+  $("#payment_type").on("change", function () {
+    var paymentMethod = $(this).val();
+    if (paymentMethod === "Cash on Delivery") {
+      $("#completePaymentButton").hide();
+      $("#placeOrderButton").show();
+    } else {
+      $("#completePaymentButton").show();
+      $("#placeOrderButton").hide();
+    }
+  });
 });
 </script>
 
