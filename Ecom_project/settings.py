@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from razorpay_settings import RAZORPAY_API_KEY, RAZORPAY_API_SECRET
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -166,3 +167,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'OAUTH_PKCE_ENABLED': True,
     }
 }
+
+razorpay_key_id = 'rzp_test_52N7MHvpRp2r81'
+key_secret = 'iwMO9HWPuTX5r5PT9niGWaEw'

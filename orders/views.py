@@ -1,5 +1,7 @@
+from audioop import reverse
 from decimal import Decimal
-from django.http import JsonResponse
+from django.conf import settings
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from coupon_app.models import Coupon
 from cart.models import Cart, UserCart
@@ -7,12 +9,15 @@ from user_app.models import Address
 from .models import Order
 from django.db.models import Q
 from django.utils import timezone
-
+import razorpay
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def order_list(request):
     # Retrieve all orders
     orders = Order.objects.filter(user=request.user)
+    
 
     context = {
         'orders': orders
@@ -75,8 +80,19 @@ def checkout(request):
 
 def order_tracking(request, order_id):
     addresses = Address.objects.filter(user=request.user)
-    order = get_object_or_404(Order, id=order_id)
-    return render(request, 'orders/order_tracking.html', {'order': order, 'addresses': addresses})
+    order_obj = get_object_or_404(Order, id=order_id) 
+    total_price_float = float(order_obj.total_price)
+    client = razorpay.Client(auth=('rzp_test_52N7MHvpRp2r81', 'iwMO9HWPuTX5r5PT9niGWaEw'))
+    #data = { "amount": order_detail.total_price, "currency": "INR", "receipt": "order_rcptid_11" }
+    payment = client.order.create({ "amount": total_price_float * 100, "currency": "INR", "payment_capture": 1, })
+
+    print('*************')
+    print(payment)
+    print('*************')
+    
+    return render(request, 'orders/order_tracking.html', {'order': order_obj, 'addresses': addresses, 'payment' : payment})
+
+
 
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
@@ -104,8 +120,6 @@ def change_address(request, order_id):
     else:
         return redirect('order_tracking', order_id=order_id)
     
-
-
 def order_invoice(request, order_id):
      order = get_object_or_404(Order, id=order_id)
 
@@ -132,3 +146,5 @@ def apply_coupon(request):
 
     # Handle invalid requests or other scenarios
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+

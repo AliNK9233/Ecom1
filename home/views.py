@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from cart.models import UserCart
 from .models import Category,Variant,Product
 from django.shortcuts import render
-
+from orders.models import Order
+from django.views.decorators.csrf import csrf_exempt
 
 #import forms
 
@@ -58,3 +59,24 @@ def add_to_cart(request,):
     
 
     return redirect('view_cart')  # Redirect to the product details page    
+
+
+@csrf_exempt
+def update_payment_status(request):
+    print("update payment function started")
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+
+        # Update the payment status to 'Paid'
+        order = Order.objects.get(id=order_id)
+        order.payment_status = 'Paid'
+        order.save()
+
+        print('*********')
+        print(order_id)
+        print('*********')
+
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'error'})
+
