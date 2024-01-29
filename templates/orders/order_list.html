@@ -33,6 +33,7 @@
             <a href="{% url 'order_tracking' order.id %}" class="btn btn-sm btn-primary">Track Order</a>
             {% else %}
             <a href="{% url 'order_invoice' order.id %}" class="btn btn-sm btn-primary">Invoice</a>
+            <a href="{% url 'order_details' order.id %}" class="btn btn-sm btn-primary">Order Details</a>
             {% endif %}
         </td>
       </tr>

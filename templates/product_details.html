@@ -79,6 +79,23 @@
     <hr>
     <h2>Product Reviews</h2>
     <hr>
+    {% if reviews %}
+      <div class="row g-4">
+        {% for review in reviews %}
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ review.user.username }} - {{ review.rating }} stars</h5>
+                <p class="card-text">{{ review.review_text }}</p>
+                <small class="text-muted">Posted on {{ review.created_at }}</small>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No reviews available for this product.</p>
+    {% endif %}
     <h2>Similar Products</h2>
   </div>
 </section>

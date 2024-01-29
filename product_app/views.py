@@ -1,9 +1,8 @@
 from django.shortcuts import redirect, render
+from .models import Review
 from .forms import VariantForm,ProductForm
 from home.models import Category,Product,Variant
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -135,3 +134,28 @@ def edit_product(request, product_id):
         'form': form,
     }
     return render(request, 'product/edit_product.html', context)
+
+
+def add_review(request, variant_id):
+    variant = Variant.objects.get(pk=variant_id)
+    print(f"Variant ID: {variant_id}")
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        review_text = request.POST.get('review_text')
+
+        if not rating or not review_text:
+            messages.error(request, 'Please provide a rating and review text.')
+            
+
+        review = Review.objects.create(
+            user=request.user,
+            variant=variant,
+            rating=int(rating),
+            review_text=review_text,
+        )
+
+        messages.success(request, 'Your review has been submitted successfully!')
+        return redirect('home')
+
+    return render(request, 'product/review.html', {'variant': variant})

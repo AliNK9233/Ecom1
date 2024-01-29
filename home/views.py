@@ -1,6 +1,7 @@
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from product_app.models import Review
 
 from cart.models import UserCart
 from .models import Category,Variant,Product
@@ -25,9 +26,10 @@ def index(request):
 
 def product_details(request, variant_id):
     variant = get_object_or_404(Variant, pk=variant_id)
+    reviews = Review.objects.filter(variant=variant)
     product = variant.product
     variants = product.variant_set.all()
-    return render(request, 'product_details.html', {'variant': variant, 'variants': variants, 'selected_variant': variant})
+    return render(request, 'product_details.html', {'variant': variant, 'variants': variants, 'selected_variant': variant, 'reviews': reviews})
 
 
 
@@ -67,14 +69,9 @@ def update_payment_status(request):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
 
-        # Update the payment status to 'Paid'
         order = Order.objects.get(id=order_id)
         order.payment_status = 'Paid'
         order.save()
-
-        print('*********')
-        print(order_id)
-        print('*********')
 
         return JsonResponse({'status': 'success'})
 

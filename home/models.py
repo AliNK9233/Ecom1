@@ -1,3 +1,4 @@
+from audioop import reverse
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
@@ -42,6 +43,7 @@ class Product(models.Model):
   brand = models.CharField(max_length=100, null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
   is_available = models.BooleanField(default=True,null=True)
+
 
 
   def __str__(self):

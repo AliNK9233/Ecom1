@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from product_app.models import Review
 from coupon_app.models import Coupon
 from cart.models import Cart, UserCart
 from user_app.models import Address
@@ -147,4 +148,13 @@ def apply_coupon(request):
     # Handle invalid requests or other scenarios
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+def order_details(request, order_id):
+    order_obj = get_object_or_404(Order, id=order_id) 
 
+    items_with_reviews = []
+    for item in order_obj.cart_items.all():
+        variant = item.product  # Access the 'product' attribute instead of 'variant'
+        review = Review.objects.filter(variant=variant, user=request.user).first()
+        items_with_reviews.append({'item': item, 'review': review})
+
+    return render(request, 'orders/order_details.html', {'order': order_obj, 'items_with_reviews': items_with_reviews})
