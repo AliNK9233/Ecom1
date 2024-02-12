@@ -70,11 +70,13 @@ def update_payment_status(request):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
 
+        print(order_id)
+
         order = Order.objects.get(id=order_id)
         order.payment_status = 'Paid'
         order.save()
 
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'success', 'payment_status': order.payment_status})
 
     return JsonResponse({'status': 'error'})
 

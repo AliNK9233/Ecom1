@@ -9,20 +9,20 @@
 
   {% if order %}
     <h2>Order Details</h2>
-    <p>Order ID: {{ order.id }}</p>
+    <p id="var_orderid">Order ID: {{ order.id }}</p>
     <p>Order Date: {{ order.order_date }}</p>
     
-    <span>Total Price: ₹</span><p id="var_total">{{ order.total_price }}</p>
+    <p><span>Total Price: ₹</span><span id="var_total">{{ order.total_price }}</span></p>
     
 
     {% if order.payment_status == 'Pending' %}
-    <p>Payment Status: {{ order.payment_status }} <span class="text-warning">(Pending payment)</span></p>
-    <button id="rzp-button1" type="button" class="btn btn-primary btn-sm" >
+    <div id="payment-status"><p>Payment Status: {{ order.payment_status }} <span class="text-warning">(Pending payment)</span></p> </div>
+  
+  <button id="rzp-button1" type="button" class="btn btn-primary btn-sm">
     Complete Payment Now
-    </button>
-    {% else %}
-    <p>Payment Status: {{ order.payment_status }}</p>
-    {% endif %}
+  </button>
+
+  {% endif %}
     <p>Delivery Status: {{ order.delivery_status }}</p>
     {% if order.shipping_address %}
       <p>Shipping Address:</p>
@@ -69,10 +69,10 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-var orderId = $('.var_orderid').val();
 
 var var_total = $('#var_total').text().replace('₹', '').trim();
-console.log(var_total)
+var order_id = $('#var_orderid').text().replace('Order ID: ', '').trim();
+
 var options = {
     "key": "rzp_test_52N7MHvpRp2r81", 
     "amount": var_total * 100, 
@@ -84,7 +84,7 @@ var options = {
     
     "handler": function (response){
 
-        updatePaymentStatus(orderId);
+      updatePaymentStatus(order_id);
         
     },
 
@@ -112,6 +112,13 @@ function updatePaymentStatus(orderId) {
       dataType: 'json',
       success: function(data) {
           console.log('Payment status updated successfully');
+          $('#payment-status').text('Payment Status: ' + data.payment_status);
+          if (data.payment_status === 'Paid') {
+          $('#rzp-button1').hide();
+          $('#payment-status').text('Payment Status: ' + data.payment_status);
+
+    }
+
       },
       error: function(error) {
           console.error('Error updating payment status:', error);
