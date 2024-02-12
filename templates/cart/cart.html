@@ -46,7 +46,11 @@
       <tfoot>
         <tr>
           <td colspan="4" class="text-end">Total</td>
-          <td id="total-price">₹ {{ total|floatformat:2 }}</td>
+          <td>
+            <div id="total-price">{{ total|floatformat:2 }}</div>
+          </td>
+
+          
         </tr>
       </tfoot>
     </table>

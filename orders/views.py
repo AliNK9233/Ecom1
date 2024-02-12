@@ -1,5 +1,6 @@
 from audioop import reverse
 from decimal import Decimal
+import json
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -127,26 +128,29 @@ def order_invoice(request, order_id):
      context = {'order': order}
      return render(request, 'orders/invoice.html',context )
 
+
+from django.views.decorators.http import require_POST
+@require_POST
 def apply_coupon(request):
-    if request.method == 'POST':
-        coupon_code = request.POST.get('coupon_code')
+    try:
+        coupon_code = request.POST.get('coupon_code', '')
+        coupon = get_object_or_404(Coupon, code=coupon_code)
+        total_amount = float(request.POST.get('total_amount', 0))
 
-        # Include the logic to calculate total_price
-        user = request.user
-        cart = UserCart.objects.filter(Q(user=user) & Q(is_checkout_done=False))
-        total_price = sum(item.sub_total for item in cart)
+        if coupon.is_valid():
+            discount_amount = (coupon.discount_percent / 100) * total_amount
+            total_amount -= discount_amount
+            coupon.current_usage_count += 1
+            coupon.save()
 
-        coupon = get_object_or_404(Coupon, code=coupon_code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now())
-
-        discounted_total = total_price - (total_price * (coupon.discount_percent / 100))
-
-        coupon.current_usage_count += 1
-        coupon.save()
-
-        return JsonResponse({'total_amount': discounted_total})
-
-    # Handle invalid requests or other scenarios
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+            # Calculate and send saved amount in the response
+            saved_amount = round(discount_amount, 2)
+            return JsonResponse({'total_amount': total_amount, 'saved_amount': saved_amount})
+        else:
+            return JsonResponse({'error': 'Invalid coupon code or coupon expired'}, status=400)
+    except Exception as e:
+        print(f"Error in apply_coupon view: {e}")
+        return JsonResponse({'error': 'Internal Server Error'}, status=500)
 
 def order_details(request, order_id):
     order_obj = get_object_or_404(Order, id=order_id) 
