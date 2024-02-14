@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+    {% if messages %}
+      <div class="container mt-3">
+        {% for message in messages %}
+          <div class="alert alert-success" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <h1>Return Product</h1>
+    <p>You are requesting to return the product with item ID: {{variant.id}}</p>
+
+    <!-- Display product details -->
+    <p>Product Name: {{ variant.product.name }}</p>
+    <p>Product Price: {{ variant.price }}</p>
+    <!-- Add more product details as needed -->
+
+    {% if not messages %}  {# Check if there are no success messages #}
+        <form method="post" action="">
+            {% csrf_token %}
+            
+            <!-- Use the Django form fields for better handling -->
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-danger">Submit Return Request</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

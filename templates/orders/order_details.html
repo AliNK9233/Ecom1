@@ -28,14 +28,14 @@
                 <th>Product Name</th>
                 <th>Price</th>
                 <th>Quantity</th>
-                <th>Review</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {% for item in order.cart_items.all %}
             <tr>
                 <td>{{ item.title }}</td>
-                <td>{{ item.product.price }}</td>
+                <td>{{ item.product.price }}  {{ item.product.id }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>
                     {% if item_review.review %}
@@ -46,6 +46,10 @@
                     <a href="{% url 'add_review' item.product.id %}" class="btn btn-primary">
                         
                         <i class="fa-solid fa-pen-to-square"></i> Write Review
+                    </a>
+                    <a href="{% url 'return_product' item.product.id %}" class="btn btn-primary">
+                        
+                        <i class=""></i> Return 
                     </a>
                 {% endif %}
                 </td>

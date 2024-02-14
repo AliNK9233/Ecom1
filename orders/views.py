@@ -4,16 +4,18 @@ import json
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from home.models import Variant
 from product_app.models import Review
 from coupon_app.models import Coupon
 from cart.models import Cart, UserCart
 from user_app.models import Address
-from .models import Order
+from .models import Order,ReturnRequest
 from django.db.models import Q
 from django.utils import timezone
 import razorpay
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from .forms import ReturnRequestForm
 # Create your views here.
 
 def order_list(request):
@@ -162,3 +164,25 @@ def order_details(request, order_id):
         items_with_reviews.append({'item': item, 'review': review})
 
     return render(request, 'orders/order_details.html', {'order': order_obj, 'items_with_reviews': items_with_reviews})
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+@login_required
+def return_product(request, item_id):
+    variant = Variant.objects.get(pk=item_id)
+
+    if request.method == 'POST':
+        form = ReturnRequestForm(request.POST)
+        if form.is_valid():
+            return_request = form.save(commit=False)
+            return_request.user = request.user  # Ensure that request.user is a User instance
+            return_request.product = variant
+            return_request.save()
+            messages.success(request, 'Return request submitted successfully.')
+            return render(request, 'product/return_product.html', {'variant': variant, 'form': ReturnRequestForm()})
+    else:
+        form = ReturnRequestForm()
+
+    return render(request, 'product/return_product.html', {'variant': variant, 'form': form})

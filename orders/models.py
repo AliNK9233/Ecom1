@@ -1,4 +1,5 @@
 from django.db import models
+from home.models import Variant,Product
 from user_app.models import Address
 from django.db import models
 from django.contrib.auth.models import User
@@ -37,5 +38,15 @@ def update_delivered_date(sender, instance, **kwargs):
     
 
 
-    
+class ReturnRequest(models.Model):
+    RETURN_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    product = models.ForeignKey(Variant, on_delete=models.CASCADE)
+    reason = models.TextField()
+    status = models.CharField(max_length=50, choices=RETURN_STATUS_CHOICES, default='pending')
 
