@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from .models import Cart,CartItem,UserCart
+from .models import UserCart
 
 # Register your models here.
-admin.site.register(Cart)
-admin.site.register(CartItem)
+
 admin.site.register(UserCart)

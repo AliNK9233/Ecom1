@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from home.models import Variant
 from product_app.models import Review
 from coupon_app.models import Coupon
-from cart.models import Cart, UserCart
+from cart.models import UserCart
 from user_app.models import Address
 from .models import Order,ReturnRequest
 from django.db.models import Q
