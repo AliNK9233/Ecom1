@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from razorpay_settings import RAZORPAY_API_KEY, RAZORPAY_API_SECRET
-
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -95,7 +95,7 @@ DATABASES = {
     }
 }
 
-
+DATABASES["default"] = dj_database_url.parse("postgres://ecom_i5o2_user:sxfMqv4cfASjEzHMuJIjq0aJsKTsMUwD@dpg-cned182cn0vc73fasui0-a.oregon-postgres.render.com/ecom_i5o2")
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
