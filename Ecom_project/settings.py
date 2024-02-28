@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-@dfn7@o_9s+ao$!vc)74&9-i!+3)b8-4-6%ab3l3rzwp-@9zg#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -84,19 +84,28 @@ WSGI_APPLICATION = 'Ecom_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'ecom1',
+#         'USER': 'postgres',
+#         'PASSWORD': '0000',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ecom1',
-        'USER': 'postgres',
-        'PASSWORD': '0000',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'myprojectuser',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '',
     }
 }
 
-DATABASES["default"] = dj_database_url.parse("postgres://ecom_i5o2_user:sxfMqv4cfASjEzHMuJIjq0aJsKTsMUwD@dpg-cned182cn0vc73fasui0-a.oregon-postgres.render.com/ecom_i5o2")
-# Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -143,15 +152,12 @@ LOGIN_REDIRECT_URL = 'home'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
 
-
-ACCOUNT_SID='ACae2a7afde5beeb8cc066a24af7376ce7'
-AUTH_TOKEN='307809956779f6e223e11e387be8d713'
+ACCOUNT_SID=''
+AUTH_TOKEN=''
 COUNTRY_CODE='+91'
 TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
-TWILIO_PHONE_NUMBER='+14028356471'
+TWILIO_PHONE_NUMBER=''
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
